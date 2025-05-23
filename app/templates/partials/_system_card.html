@@ -1,0 +1,39 @@
+<div class="card h-100">
+    <div class="card-header">
+        <h5 class="card-title mb-0">System Status</h5>
+    </div>
+    <div class="card-body">
+        <div class="d-flex align-items-center mb-3">
+            <div class="flex-shrink-0">
+                <i class="mdi mdi-server text-primary" style="font-size: 2.5rem;"></i>
+            </div>
+            <div class="flex-grow-1 ms-3">
+                <h4 class="mb-0" id="host-name">Host Name</h4>
+                <span class="text-muted" id="host-ip">IP Address</span>
+            </div>
+        </div>
+        
+        <div class="progress mb-3" style="height: 20px;">
+            <div class="progress-bar bg-success" role="progressbar" id="uptime-progress" style="width: 100%">Uptime: 99.9%</div>
+        </div>
+        
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Status
+                <span class="badge bg-success" id="host-status">Online</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                CPU Cores
+                <span class="text-muted" id="cpu-cores">4</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Memory
+                <span class="text-muted" id="total-memory">16GB</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Last Check
+                <span class="text-muted" id="last-check">Just now</span>
+            </li>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Host Selection</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <select class="form-select" id="host-select">
+                                {% for host in hosts %}
+                                    <option value="{{ host.hostid }}">{{ host.name }} ({{ host.host }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="auto-refresh" checked>
+                                <label class="form-check-label" for="auto-refresh">Auto Refresh</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- System Status Card -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            {% include "partials/_system_card.html" %}
+        </div>
+
+        <!-- CPU Usage Card -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            {% include "partials/_cpu_card.html" %}
+        </div>
+
+        <!-- Memory Usage Card -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            {% include "partials/_memory_card.html" %}
+        </div>
+
+        <!-- Network Usage Card -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            {% include "partials/_network_card.html" %}
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Storage Usage Card -->
+        <div class="col-lg-8 mb-4">
+            {% include "partials/_storage_card.html" %}
+        </div>
+
+        <!-- Problems Card -->
+        <div class="col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Recent Problems</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Severity</th>
+                                    <th>Problem</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for problem in problems %}
+                                <tr>
+                                    <td>
+                                        <span class="badge bg-{{ 'danger' if problem.priority == '5' else 'warning' }}">
+                                            {{ problem.priority }}
+                                        </span>
+                                    </td>
+                                    <td>{{ problem.name }}</td>
+                                    <td>{{ problem.clock|datetimeformat }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Host selection change
+        document.getElementById('host-select').addEventListener('change', function() {
+            const hostId = this.value;
+            fetch(`/host/${hostId}`)
+                .then(response => response.json())
+                .then(data => {
+                    updateCharts(data);
+                });
+        });
+
+        // Initialize charts with initial data
+        document.addEventListener('DOMContentLoaded', function() {
+            const initialData = {{ metrics|tojson }};
+            updateCharts(initialData);
+        });
+    </script>
+{% endblock %}

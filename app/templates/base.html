@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Lab Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="active">
+            <div class="sidebar-header">
+                <h3>Home Lab Dashboard</h3>
+                <strong>HLD</strong>
+            </div>
+
+            <ul class="list-unstyled components">
+                <li class="active">
+                    <a href="{{ url_for('main.dashboard') }}">
+                        <i class="mdi mdi-monitor-dashboard"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="mdi mdi-server"></i>
+                        Hosts
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="mdi mdi-alert-circle"></i>
+                        Problems
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="mdi mdi-chart-areaspline"></i>
+                        Metrics
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="mdi mdi-cog"></i>
+                        Settings
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Page Content -->
+        <div id="content">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn btn-info">
+                        <i class="mdi mdi-menu"></i>
+                    </button>
+                    <div class="mx-auto">
+                        <h4 class="mb-0">Home Lab Monitoring</h4>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span id="current-time" class="me-3"></span>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="refreshDropdown" data-bs-toggle="dropdown">
+                                <i class="mdi mdi-refresh"></i> Refresh
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" data-interval="30">30 seconds</a></li>
+                                <li><a class="dropdown-item" href="#" data-interval="60">1 minute</a></li>
+                                <li><a class="dropdown-item" href="#" data-interval="300">5 minutes</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container-fluid">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+    <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+    
+    <script>
+        // Update current time
+        function updateTime() {
+            document.getElementById('current-time').textContent = moment().format('MMMM Do YYYY, h:mm:ss a');
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // Sidebar toggle
+        document.getElementById('sidebarCollapse').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+
+        // Set refresh interval
+        document.querySelectorAll('.dropdown-item[data-interval]').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const interval = parseInt(this.getAttribute('data-interval'));
+                localStorage.setItem('refreshInterval', interval);
+                location.reload();
+            });
+        });
+
+        // Auto-refresh
+        const refreshInterval = localStorage.getItem('refreshInterval') || {{ config.REFRESH_INTERVAL }};
+        setTimeout(() => location.reload(), refreshInterval * 1000);
+    </script>
+</body>
+</html>
